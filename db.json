@@ -1,5 +1,22 @@
 {
-  "budgets": [],
+  "budgets": [
+    {
+      "id": "813014374",
+      "client": "aaaaaaaaa",
+      "date": "2023-09-14",
+      "zoneModules": [
+        {
+          "zone": "Comedor",
+          "module": {
+            "id": "1",
+            "name": "Interruptor simple",
+            "slots": 1,
+            "price": 1000
+          }
+        }
+      ]
+    }
+  ],
   "module-types": [
     {
       "id": "1",

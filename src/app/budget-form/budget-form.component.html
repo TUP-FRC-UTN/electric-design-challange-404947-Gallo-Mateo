@@ -2,3 +2,118 @@
 https://getbootstrap.com/docs/5.3/forms/form-control/#example
 https://getbootstrap.com/docs/5.3/forms/select/#default
 https://getbootstrap.com/docs/5.3/forms/select/#default -->
+<div class="container m-1 p-1">
+
+    <h2 class="m-1">Create New Order</h2>
+    <!-- (ngSubmit)="sendForm()" -->
+    <form [formGroup]="form" class="row g-3 container"> 
+
+        <div class="col-md-4">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input [ngClass]="{'is-invalid':form.controls['nombre'].invalid && form.controls['nombre'].touched }"
+                formControlName="nombre" type="text" class="form-control">
+
+            @if(form.controls['nombre'].invalid && form.controls['nombre'].touched){
+
+                @if(form.controls['nombre'].errors?.['required']){
+                    <div class="text-danger">Nombre es requerido</div>
+                }
+                @if (form.controls['nombre'].errors?.['minlength']) {
+                    <div class="text-danger">Debe tener al menos 3 caracteres</div>
+                }
+            }
+        </div>
+        <div class="col-md-4">
+            <label for="fecha" class="form-label">Fecha</label>
+            <input type="date" class="form-control" formControlName="fecha">
+
+            @if(form.controls['fecha'].invalid && form.controls['fecha'].touched){
+
+                @if(form.controls['email'].errors?.['required']){
+                    <div class="text-danger">Email es requerido</div>
+                }
+                @if (form.controls['email'].errors?.['email']) {
+                    <div class="text-danger">Formato de email incorrecto</div>
+                }
+                @if (form.controls['email'].errors?.['errorPedidos24hrs']) {
+                    <div class="text-danger">Alcanzo el maximo de 3 pedidos en las ultimas 24hrs</div>
+                }
+            }
+        </div>
+
+        <hr>
+
+        <div class="col-md-10 justify-content-center align-items-center">
+            <h2 class="m-1">Zonas / Modulos</h2>
+            <div formArrayName="zonasFormArray">
+                
+                <div class="row">
+                    @if (!zonasFormArray.getError("overTenProducts")) {
+                        <button type="button" class="col-1 btn btn-primary" (click)="agregarZone()">+</button>
+                    }
+                    @if(zonasFormArray.invalid) {
+                        @if (zonasFormArray.getError("zeroProducts")) {
+                            <div class="col-11 text-danger">Debe ordenar minimo 1 producto</div>
+                        }
+                        @if (zonasFormArray.getError("overTenProducts")) {
+                            <div class="col-11 text-danger">Debe ordenar maximo 10 productos</div>
+                        }
+                        @if (zonasFormArray.getError("productoDuplicado")) {
+                            <div class="col-11 text-danger">No puede ordenar el mismo producto 2 o mas veces</div>
+                        }
+                    }            
+                </div>
+
+                <div class="row justify-content-center align-items-center">
+                    @for(zona of zonasFormArray.controls; track $index){
+                        <div class="col-5 p-1 m-3 border rounded" [formGroupName]="$index"> <!--mucho muy importante -->
+                            <div class="col">
+                                <button type="button" class="btn btn-close btn-danger" (click)="eliminarZone($index)"></button>
+                            </div>
+
+                            <div class="col">
+                                <label for="tipoModulo" class="form-label">Tipo Modulo</label>
+                                <select name="tipoModulo" id="idProducto" class="form-control" formControlName="tipoModulo">
+                                    @for(s of selectModuleTypesValues; track $index){
+                                        <option [ngValue]="s.id">{{s.name}}</option>
+                                    }    
+                                </select>
+                                @if (zonasFormArray.get('idProducto')?.hasError("productoDuplicado")) {
+                                    <div class="col-auto text-danger">No puede ordenar el mismo producto 2 o mas veces</div>
+                                }
+                            </div>
+                            <div class="col">
+                                <label for="ambiente" class="form-label">Ambiente</label>
+                                <select name="ambiente" id="ambiente" class="form-control" formControlName="ambiente">
+                                    @for(z of selectZones; track $index){
+                                        <option [value]="z">{{z}}</option>
+                                    }    
+                                </select>
+                                @if (zonasFormArray.get('idProducto')?.hasError("productoDuplicado")) {
+                                    <div class="col-auto text-danger">No puede ordenar el mismo producto 2 o mas veces</div>
+                                }
+                            </div>
+                            <div class="col">
+                                <label for="precio" class="form-label">Precio</label>
+                                <input type="number" class="form-control" formControlName="precio" readonly>
+                            </div>
+                            <div class="col">
+                                <label for="lugares" class="form-label">Lugares (q ocupa el modulo seleccionado)</label>
+                                <input type="number" class="form-control" formControlName="lugares" readonly>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+
+    </form>
+
+    <hr>
+
+    <div class="col-2">
+        <button type="submit" class="btn btn-primary" [disabled]="form.invalid" (click)="onSubmit()">Create Budget</button>
+    </div>
+
+</div>
